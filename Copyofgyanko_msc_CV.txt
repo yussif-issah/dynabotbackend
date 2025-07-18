@@ -1,0 +1,49 @@
+﻿Yussif Issah Gyanko 
+                            gyanko.yussif@uri.edu | +1 401 306 0840
+       LinkedIn|Github|website
+EDUCATION                                                                                                                        
+Computer Science,  Msc (GPA:3.77)                                                                                        08/2023 - 08/2025
+University of Rhode Island (Rhode Island, USA) 
+Bsc. in Computer Engineering  (GPA: 3.52)                                                                                            08/2017 - 11/2021
+University of Ghana (Accra,Ghana)
+
+
+
+
+EXPERIENCE        
+                                                                                                        
+UNIVERSITY OF RHODE ISLAND | C++,Git and Github, Python, Bash scripting , Machine learning                 
+Research Assistant | Kingston, Rhode Island, USA.                                                                                                                           06/2023 -Present
+* Developed an AI-powered pedestrian routing app integrating LLMs, Flutter, and OSM to enhance sidewalk accessibility using real-time crowdsourced data.
+* Designed and implemented a custom deep learning segmentation model to classify land use and land cover types from satellite imagery.
+* Developed a state-of-the-art Transformer-based model (GAT) to forecast vegetation degradation by integrating spatial attention and temporal dynamics from satellite imagery, achieving superior accuracy over baseline models. 
+
+
+
+
+CONFEERA  | Angular, Laravel, Git and Github, Paypal payment integration 
+Web Developer | Delaware, USA                                                                                                                                                          07/2023 - present 
+*  Integrated PayPal payment API into the CONFEERA web application, enabling secure transactions and increasing payment processing efficiency by 50%.
+* Implemented 10+ new features and resolved 10+ bugs in the application, improving functionality and reducing error rates by 30%.
+Confeera.com is a startup based in Delaware that helps organizations to create websites for scientific conferences in a fast and easy way 
+
+
+
+
+PRICEWATERHOUSECOOPERS | Asp.net, Angular, Sql, Git, Abp.io, Machine learning                                                     
+Associate – Software Engineer | Greater Accra, Ghana                                                                                                                    10/2021 – 08/2023
+International Financial Reporting Standard (IFRS9)
+* Collaborated with cross-functional teams to design and implement  an automated expected credit and loss system based on IFRS9, achieving a remarkable 70% reduction in calculation time and  enabling better decision-making for credit risk management.
+* Translated complex IFRS9 model components, including Exposure at Default, Probability of Default, and Loss Given Default, from Excel-based formulas into C# code, reducing calculation time by 50% and improving model accuracy and integration efficiency.
+
+
+BRANDTRADER | Asp.net, Stripe payment                                                                 
+ Web developer | New Jersey (Remote position)                                                                                                                                 09/2022 – 12/2022
+* Developed the eCommerce API for Brantrader, collaborating with a team of 4 developers, which streamlined transaction processes and improved system response time by 30% (https://app.brandtrader.com).
+* Redesigned and optimized trader price matching feature, leading to an impressive 40% boost in trader engagement. 
+* Integrated the Stripe payment and subscription API, enabling seamless payment processing and subscription management, which increased transaction success rates by 45% and enhanced user experience.
+ACHIEVEMENTS/PUBLICATIONS                                                                                                        
+*  Best Demo Paper, IEEE Conference on Mobile Data Management  2025, Irvine California.
+Awarded at the 26th International Conference on Mobile Data Management for a pedestrian navigation system that leverages AI and real-time crowdsourced hazard reporting for adaptive, accessible routing 
+*  Gyanko Issah Yussif, Marwan Abdelatti, and Abdeltawab Hendawi.  Harnessing Crowdsourced Mobile Data and LLM for Dynamic and Accessible Pedestrian Routing.  In Proceedings of the IEEE International Conference on Mobile Data Management (MDM 2025), Irvine, CA, USA. IEEE, 2025.
+* Gyanko Issah Yussif, David Lagomasino, Emi Uchida, and Abdeltawab Hendawi.  Grid Attention Transformer (GAT): A Transformer-Based Model for Spatio-Temporal Vegetation Risk Analysis.   Under review at the 33rd ACM International Conference on Advances in Geographic Information Systems (ACM SIGSPATIAL ’25), Minneapolis, MN, 2025.
