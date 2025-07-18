@@ -5,12 +5,16 @@ from services.VectoreStore import VectoreStore
 from services.DocumentProcessing import DocumentProcessing
 from services.TextProcessing import TextProcessing
 from services.AnswerQuestions import AnswerQuestions
+import json
 
 
 
+with open('settings.json', 'r') as f:
+    settings = json.load(f)
+    os.environ['OPENAI_API_KEY'] = settings.get("openai_api_key", "")
+    os.environ['PINECONE_API_KEY'] = settings.get("pinecone_api_key", "")
 
-os.environ['OPENAI_API_KEY'] = "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"
-pc = Pinecone(api_key="pcsk_2Ertsy_GHUwZEidUrQGJ6zBEEwVedQW7Vu4ttE3UBZtP6ZJkWifgw6AnaDXCWhkSfsvPfS")
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 client = OpenAI(
     # This is the default and can be omitted
     api_key=os.environ.get("OPENAI_API_KEY"),
@@ -22,7 +26,6 @@ def create_vector_store():
     print("Vector store created successfully.")
 
 def query_vector_store(query_text):
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
     answerQuestions = AnswerQuestions(vector_store=VectoreStore(pc, DocumentProcessing(), TextProcessing()), client=client) 
     answerQuestions.answer_query(query_text)
 
