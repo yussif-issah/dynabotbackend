@@ -1,4 +1,4 @@
 {
-    "openai_api_key": "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",
-    "pinecone_api_key": "pcsk_2Ertsy_GHUwZEidUrQGJ6zBEEwVedQW7Vu4ttE3UBZtP6ZJkWifgw6AnaDXCWhkSfsvPfS"
+    "openai_api_key": "",
+    "pinecone_api_key": "",
 }
