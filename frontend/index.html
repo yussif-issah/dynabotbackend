@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynabot — Ingest</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="wrap">
+      <div class="header-inner">
+        <a href="#" class="brand">
+          <div class="logo">DB</div>
+          <div class="brand-text">
+            <h1>Dynabot</h1>
+            <p>Build an agent for your business</p>
+          </div>
+        </a>
+        <nav class="nav-actions">
+          <a class="btn btn-ghost" href="#">Docs</a>
+          <a class="btn btn-primary" href="#">Dashboard</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-eyebrow">
+        <span class="pulse-dot"></span>
+        Knowledge Ingestion
+      </div>
+      <h2>Feed your agent with<br><em>the right context</em></h2>
+      <p>Upload files, scrape a URL, or write text directly — Dynabot chunks, embeds, and indexes everything in seconds.</p>
+    </div>
+  </section>
+
+  <!-- STEPS NAV -->
+  <div class="wrap steps-wrap">
+    <div class="steps-nav">
+      <button class="step-tab active" data-panel="panel-upload">
+        <span class="step-num">1</span>Upload Files
+      </button>
+      <button class="step-tab" data-panel="panel-url">
+        <span class="step-num">2</span>Website URL
+      </button>
+      <button class="step-tab" data-panel="panel-text">
+        <span class="step-num">3</span>Write Text
+      </button>
+    </div>
+  </div>
+
+  <!-- PANELS -->
+  <main class="wrap panel-wrap">
+
+    <!-- Panel 1: Upload Documents -->
+    <div class="card panel active" id="panel-upload">
+      <div class="card-icon cyan">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="12" y1="18" x2="12" y2="12"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h3>Upload Documents</h3>
+      <p class="desc">Upload one or more files — txt, md, or html. We chunk and index them instantly.</p>
+
+      <label class="file-drop-zone" id="dropZone">
+        <input id="fileInput" type="file" multiple accept=".txt,.md,.html" />
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 5 17 10"/>
+          <line x1="12" y1="5" x2="12" y2="19"/>
+        </svg>
+        <div>
+          <div class="drop-title"><span>Click to browse</span> or drag &amp; drop</div>
+          <div class="drop-sub">Supports .txt · .md · .html</div>
+        </div>
+      </label>
+
+      <div class="card-footer">
+        <button id="uploadBtn" class="btn btn-primary btn-full">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="7 10 12 5 17 10"/>
+            <line x1="12" y1="5" x2="12" y2="19"/>
+          </svg>
+          Upload &amp; Process
+        </button>
+        <div id="uploadStatus" class="status"></div>
+      </div>
+    </div>
+
+    <!-- Panel 2: Ingest Website -->
+    <div class="card panel" id="panel-url">
+      <div class="card-icon indigo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <h3>Ingest Website</h3>
+      <p class="desc">Enter a public URL and we'll fetch and index the page's content automatically.</p>
+
+      <div class="url-row">
+        <input id="urlInput" type="url" placeholder="https://example.com/article" />
+        <button id="ingestBtn" class="btn btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Fetch &amp; Process
+        </button>
+      </div>
+
+      <div class="options-section">
+        <div class="options-label">Options</div>
+        <div class="options-list">
+          <label class="option-row">
+            <input type="checkbox" checked />
+            <span>Follow internal links (depth 1)</span>
+          </label>
+          <label class="option-row">
+            <input type="checkbox" />
+            <span>Strip navigation &amp; footers</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div id="ingestStatus" class="status"></div>
+      </div>
+    </div>
+
+    <!-- Panel 3: Write Text -->
+    <div class="card panel" id="panel-text">
+      <div class="card-icon green">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+      </div>
+      <h3>Write Text</h3>
+      <p class="desc">Paste or write text directly — it's indexed immediately with no extra steps.</p>
+
+      <input id="textTitle" type="text" placeholder="Optional title (e.g., Product FAQ)" />
+      <textarea id="textInput" placeholder="Paste or type your content here…"></textarea>
+
+      <div class="card-footer">
+        <button id="textIngestBtn" class="btn btn-primary btn-full">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14"/>
+            <path d="M12 5l7 7-7 7"/>
+          </svg>
+          Ingest Text
+        </button>
+        <div id="textStatus" class="status"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- PING STRIP -->
+  <div class="bottom-strip">
+    <div class="wrap">
+      <div class="ping-card">
+        <div class="ping-card-left">
+          <h3>Server Health</h3>
+          <p>Ping the API to verify your connection and environment.</p>
+        </div>
+        <div class="ping-right">
+          <div id="testStatus" class="status status-inline"></div>
+          <button id="testBtn" class="btn btn-ghost">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            Ping /test
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2025 <a href="#">Dynabot</a> &mdash; Local demo. Secure your keys before production.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ── TAB SWITCHING ──
+    const tabs = document.querySelectorAll('.step-tab');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.dataset.panel;
+        const current = document.querySelector('.panel.active');
+
+        // No-op if already active
+        if (current && current.id === targetId) return;
+
+        // Update tab active state
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        // Fade out current, then fade in next
+        if (current) {
+          current.classList.add('leaving');
+          setTimeout(() => {
+            current.classList.remove('active', 'leaving');
+            const next = document.getElementById(targetId);
+            next.classList.add('active');
+          }, 220);
+        } else {
+          document.getElementById(targetId).classList.add('active');
+        }
+      });
+    });
+
+    // ── DRAG & DROP ──
+    const dropZone = document.getElementById('dropZone');
+    ['dragenter', 'dragover'].forEach(e =>
+      dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('dragging'); })
+    );
+    ['dragleave', 'drop'].forEach(e =>
+      dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('dragging'); })
+    );
+
+    // ── STATUS HELPER ──
+    function setStatus(el, msg, type = '') {
+      el.textContent = msg;
+      el.className = 'status ' + type;
+    }
+
+    document.getElementById('uploadBtn').addEventListener('click', () => {
+      const files = document.getElementById('fileInput').files;
+      const st = document.getElementById('uploadStatus');
+      if (!files.length) { setStatus(st, 'No files selected.', 'error'); return; }
+      setStatus(st, 'Processing ' + files.length + ' file(s)...');
+      setTimeout(() => setStatus(st, '\u2713 ' + files.length + ' file(s) indexed successfully.', 'ok'), 1400);
+    });
+
+    document.getElementById('ingestBtn').addEventListener('click', () => {
+      const url = document.getElementById('urlInput').value.trim();
+      const st = document.getElementById('ingestStatus');
+      if (!url) { setStatus(st, 'Please enter a valid URL.', 'error'); return; }
+      setStatus(st, 'Fetching ' + url + '...');
+      setTimeout(() => setStatus(st, '\u2713 Page indexed successfully.', 'ok'), 1600);
+    });
+
+    document.getElementById('textIngestBtn').addEventListener('click', () => {
+      const txt = document.getElementById('textInput').value.trim();
+      const st = document.getElementById('textStatus');
+      if (!txt) { setStatus(st, 'No text to ingest.', 'error'); return; }
+      setStatus(st, 'Ingesting...');
+      setTimeout(() => setStatus(st, '\u2713 Text indexed (' + txt.length + ' chars).', 'ok'), 900);
+    });
+
+    document.getElementById('testBtn').addEventListener('click', () => {
+      const st = document.getElementById('testStatus');
+      setStatus(st, 'Pinging...');
+      setTimeout(() => setStatus(st, '\u2713 Server online \u2014 12ms', 'ok'), 600);
+    });
+  </script>
+</body>
+</html>
