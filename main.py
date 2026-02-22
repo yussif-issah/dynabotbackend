@@ -96,8 +96,8 @@ async def upload_files(files: List[UploadFile] = File(...),token: str = Form(Non
                 text_content = contents.decode("latin-1", errors="ignore")
 
             # Send to vector store
-            user_name = get_current_user(token=token, db=Depends(get_db))
-            vector_store.create_store(text_content,index_name=user_name.username,namespace=user_name.username)
+            user_name = await get_current_user(token=token, db=Depends(get_db))
+            vector_store.create_store(text_content,index_name=user_name.lower(),namespace=user_name.lower())
 
             processed_files.append(file.filename)
 
@@ -150,10 +150,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
             detail="Invalid authentication credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    user = db.query(models.User).filter(models.User.username == username).first()
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
+    return username
 
 @app.get("/users/me", response_model=schema.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):

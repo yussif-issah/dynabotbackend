@@ -155,7 +155,9 @@
         body: JSON.stringify({ email:email, password:password })
       });
 
-      localStorage.setItem("access_token", res.access_token);
+      const resData = await res.json();
+      console.log(resData.access_token);
+      localStorage.setItem("access_token", resData.access_token);
       
       if (res.ok) {
         alert("Login successful!");

@@ -37,10 +37,10 @@ class VectoreStore:
                 continue
 
             vector = {
-                "id": f"gyanko_{i}",
+                "id": f"{index_name.lower()}_{i}",
                 "values": emb_list,
                 "metadata": {
-                    "user_id": "gyanko_user_id",
+                    "user_id": index_name.lower(),
                     "file_name": document,
                     "chunk": chunk,
                 }

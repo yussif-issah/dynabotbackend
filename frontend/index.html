@@ -252,6 +252,7 @@
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i]);
     }
+    console.log(localStorage.getItem('access_token'))
 
     formData.append('token', localStorage.getItem('access_token'));
 
