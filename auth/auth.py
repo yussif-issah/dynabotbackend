@@ -3,6 +3,8 @@ import jwt
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+import bcrypt
+bcrypt.__about__ = bcrypt
 # Load environment variables
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")

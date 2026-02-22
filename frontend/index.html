@@ -70,10 +70,10 @@
         </svg>
       </div>
       <h3>Upload Documents</h3>
-      <p class="desc">Upload one or more files — txt, md, or html. We chunk and index them instantly.</p>
+      <p class="desc">Upload one or more files — txt, pdf, or html. We chunk and index them instantly.</p>
 
       <label class="file-drop-zone" id="dropZone">
-        <input id="fileInput" type="file" multiple accept=".txt,.md,.html" />
+        <input id="fileInput" type="file" multiple accept=".txt,.pdf,.html" />
         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="7 10 12 5 17 10"/>
@@ -81,7 +81,7 @@
         </svg>
         <div>
           <div class="drop-title"><span>Click to browse</span> or drag &amp; drop</div>
-          <div class="drop-sub">Supports .txt · .md · .html</div>
+          <div class="drop-sub">Supports .txt · .pdf · .html</div>
         </div>
       </label>
 
@@ -238,11 +238,45 @@
       el.className = 'status ' + type;
     }
 
-    document.getElementById('uploadBtn').addEventListener('click', () => {
+    document.getElementById('uploadBtn').addEventListener('click', async () => {
       const files = document.getElementById('fileInput').files;
       const st = document.getElementById('uploadStatus');
       if (!files.length) { setStatus(st, 'No files selected.', 'error'); return; }
       setStatus(st, 'Processing ' + files.length + ' file(s)...');
+
+      try {
+
+      const formData = new FormData();
+
+    // Append multiple files
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+
+    formData.append('token', localStorage.getItem('access_token'));
+
+    const response = await fetch('/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`Upload failed (${response.status})`);
+    }
+
+    const result = await response.json();
+
+    setStatus(
+      st,
+      `✓ ${result.message || files.length + ' file(s) indexed successfully.'}`,
+      'ok'
+    );
+
+  } catch (error) {
+    console.error(error);
+    setStatus(st, `Upload failed: ${error.message}`, 'error');
+  }
+
       setTimeout(() => setStatus(st, '\u2713 ' + files.length + ' file(s) indexed successfully.', 'ok'), 1400);
     });
 

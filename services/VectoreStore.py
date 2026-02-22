@@ -11,11 +11,11 @@ class VectoreStore:
         self.document_processor = document_processor
         self.text_processor = text_processor
 
-    def create_store(self, document, index_name: str = "gyankofirstdraft", namespace: str = "gyankoSpace", upsert_batch: int = 200):
+    def create_store(self, document, index_name: str = "", namespace: str = "", upsert_batch: int = 200):
         # Load the document
-        self.document_processor.read_document(document)
+        #self.document_processor.read_document(document)
         # Chunk the text
-        chunks = self.text_processor.chunk_text(self.document_processor.text)
+        chunks = self.text_processor.chunk_text(document)
 
         if not chunks:
             print("No chunks produced from document, skipping.")

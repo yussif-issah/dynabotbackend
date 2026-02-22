@@ -1,3 +1,5 @@
+# Chat bot API endpoint for /chat_api/{user_id}
+from fastapi import File, Request,Form
 from openai import OpenAI
 import os
 from pinecone import Pinecone
@@ -15,6 +17,7 @@ from sqlalchemy.orm import Session
 from database.database import engine, get_db
 from models import models,schema
 from auth import auth
+from fastapi.responses import HTMLResponse
 
 try:
     models.Base.metadata.create_all(bind=engine)
@@ -38,26 +41,76 @@ client = OpenAI(
 
 app = FastAPI()
 
-# Serve the simple frontend from the `frontend` folder (index.html)
-app.mount("/", StaticFiles(directory="frontend", html=True), name="frontend")
+
+# Serve static files from the `frontend` folder at /static
+app.mount("/static", StaticFiles(directory="frontend", html=True), name="static")
+
+
+
+@app.post("/chat_api/{user_id}")
+async def chat_api(user_id: str, request: Request):
+    data = await request.json()
+    message = data.get("message")
+    if not message:
+        return {"reply": "No message provided."}
+    # Use AnswerQuestions to generate a reply
+    answerQuestions = AnswerQuestions(vector_store=VectoreStore(pc, DocumentProcessing(), TextProcessing()), client=client)
+    reply = answerQuestions.answer_query(message)
+    return {"reply": reply}
+
+
+# Serve chat page for /chat/{user_id} using chat.html
+@app.get("/chat/{user_id}", response_class=HTMLResponse)
+async def chat_page(user_id: str):
+    with open("frontend/chat.html", "r", encoding="utf-8") as f:
+        html = f.read()
+    # Inject user_id as a JS variable
+    inject_script = f'<script>window.CHAT_USER_ID = "{user_id}";</script>'
+    html = html.replace("__USER_ID__", user_id)
+    return HTMLResponse(content=html)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@app.post("/handle_uploaded_files/")
-async def handle_uploaded_files(files: List[UploadFile]):
-    if files is None:
+@app.post("/upload")
+async def upload_files(files: List[UploadFile] = File(...),token: str = Form(None)):
+
+    if not files:
         return {"message": "No files uploaded."}
-    os.makedirs("uploaded_files", exist_ok=True)
+
     vector_store = VectoreStore(pc, DocumentProcessing(), TextProcessing())
 
-    for file in files:
-        file_path = f"uploaded_files/{file.filename}"
-        with open(file_path, 'wb') as f:
-            f.write(file.file.read())
+    processed_files = []
 
-        vector_store.create_store(file_path)
-    
-    return {"message": "Files processed and vector store created successfully."}
+    for file in files:
+        try:
+            # Read file directly from memory
+            contents = await file.read()
+
+            if not contents:
+                continue
+
+            # Decode safely (assuming text files)
+            try:
+                text_content = contents.decode("utf-8")
+            except UnicodeDecodeError:
+                text_content = contents.decode("latin-1", errors="ignore")
+
+            # Send to vector store
+            user_name = get_current_user(token=token, db=Depends(get_db))
+            vector_store.create_store(text_content,index_name=user_name.username,namespace=user_name.username)
+
+            processed_files.append(file.filename)
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Error processing {file.filename}: {str(e)}"
+            )
+
+    return {
+        "message": f"{len(processed_files)} file(s) processed successfully.",
+        "files": processed_files
+    }
 
 @app.get("/test")
 async def test_endpoint():
@@ -79,15 +132,16 @@ def register_user(user: schema.UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/token", response_model=schema.Token)
 def login_for_access_token(form_data: schema.Login, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == form_data.username).first()
+    user = db.query(models.User).filter(models.User.email == form_data.email).first()
     if not user or not auth.verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = auth.create_access_token(data={"sub": user.username})
     return {"access_token": access_token, "token_type": "bearer"}
+
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     username = auth.verify_token(token)
     if username is None:
@@ -100,6 +154,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
 @app.get("/users/me", response_model=schema.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):
     return current_user
