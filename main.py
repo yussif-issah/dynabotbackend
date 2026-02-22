@@ -190,7 +190,7 @@ async def ingest_url(payload: dict):
     content = '\n'.join(map(str,full_text))
 
     vector_store = VectoreStore(pc, DocumentProcessing(), TextProcessing())
-    vector_store.create_store(content)
+    vector_store.create_store(content,"janedoe",namespace="janedoe")
     return {"message": "URL ingested and vector store updated."}
 
 
