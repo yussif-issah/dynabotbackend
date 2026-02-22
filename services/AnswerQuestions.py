@@ -5,14 +5,14 @@ class AnswerQuestions:
         self.client = client
 
     def answer_query(self, query: str,user_id: str = 'gyanko_user_id'):
-        index_name = "gyankofirstdraft"
+        index_name = user_id.lower()
         index = self.vector_store.pc.Index(index_name)
 
         # create embedding for the query
         query_embedding = self.vector_store.text_processor.embed_text(query)
 
         # search the index
-        res = index.query(vector=query_embedding, top_k=5, include_metadata=True, filter={"user_id": user_id}, namespace="gyankoSpace")
+        res = index.query(vector=query_embedding, top_k=5, include_metadata=True, filter={"user_id": user_id.lower()}, namespace=user_id.lower())
 
         context = "\n".join([match.metadata["chunk"] for match in res.matches])
 

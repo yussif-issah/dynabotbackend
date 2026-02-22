@@ -145,7 +145,7 @@ if (window.CHAT_USER_ID) {
   chat.innerHTML = `
     <div class="chat-header">
       Dynabot <br>
-      <small>User: ${window.CHAT_USER_ID} • Online</small>
+      <small>Agent: ${window.CHAT_USER_ID} • Online</small>
     </div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-area">

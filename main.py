@@ -55,18 +55,20 @@ async def chat_api(user_id: str, request: Request):
         return {"reply": "No message provided."}
     # Use AnswerQuestions to generate a reply
     answerQuestions = AnswerQuestions(vector_store=VectoreStore(pc, DocumentProcessing(), TextProcessing()), client=client)
-    reply = answerQuestions.answer_query(message)
+    reply = answerQuestions.answer_query(message,user_id=user_id)
     return {"reply": reply}
 
 
 # Serve chat page for /chat/{user_id} using chat.html
 @app.get("/chat/{user_id}", response_class=HTMLResponse)
 async def chat_page(user_id: str):
+    print(f"Serving chat page for user_id: {user_id}")
     with open("frontend/chat.html", "r", encoding="utf-8") as f:
         html = f.read()
     # Inject user_id as a JS variable
     inject_script = f'<script>window.CHAT_USER_ID = "{user_id}";</script>'
-    html = html.replace("__USER_ID__", user_id)
+    safe_user_id = json.dumps(user_id)
+    html = html.replace("__USER_ID__", safe_user_id)
     return HTMLResponse(content=html)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -140,7 +142,8 @@ def login_for_access_token(form_data: schema.Login, db: Session = Depends(get_db
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = auth.create_access_token(data={"sub": user.username})
-    return {"access_token": access_token, "token_type": "bearer"}
+    print(f"Generated token for {user.username}: {access_token}")
+    return {"access_token": access_token, "token_type": "bearer", "username": user.username}
 
 async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     username = auth.verify_token(token)

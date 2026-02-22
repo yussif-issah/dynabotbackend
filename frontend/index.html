@@ -170,8 +170,8 @@
     <div class="wrap">
       <div class="ping-card">
         <div class="ping-card-left">
-          <h3>Server Health</h3>
-          <p>Ping the API to verify your connection and environment.</p>
+          <h3>Test Your Agent</h3>
+          <p>When you're ready, test your agent by chatting with it</p>
         </div>
         <div class="ping-right">
           <div id="testStatus" class="status status-inline"></div>
@@ -179,7 +179,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
             </svg>
-            Ping /test
+            Chat with Agent
           </button>
         </div>
       </div>
@@ -297,11 +297,24 @@
       setTimeout(() => setStatus(st, '\u2713 Text indexed (' + txt.length + ' chars).', 'ok'), 900);
     });
 
-    document.getElementById('testBtn').addEventListener('click', () => {
-      const st = document.getElementById('testStatus');
-      setStatus(st, 'Pinging...');
-      setTimeout(() => setStatus(st, '\u2713 Server online \u2014 12ms', 'ok'), 600);
-    });
+    document.getElementById('testBtn').addEventListener('click', async () =>{
+      
+      username = localStorage.getItem("username");
+      console.log("Testing chat with username:", username);
+      try {
+      const res = await fetch(`/chat/${username}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+    window.location.href = `/chat/${encodeURIComponent(username)}`;
+
+    } catch (err) {
+      console.error("Error during chat initiation:", err);
+      alert("Error initiating chat. Please try again.");
+      
+    }});
+
   </script>
 </body>
 </html>
