@@ -175,35 +175,3 @@ def clamp_text(text: str, max_chars: int = 200_000) -> str:
         return text
     # Simple truncation; you could do smarter summarization if needed
     return text[:max_chars]
-
-
-
-from langchain_community.document_loaders.recursive_url_loader import RecursiveUrlLoader
-from bs4 import BeautifulSoup
-from sentence_transformers import SentenceTransformer
-import numpy as np
-
-def bs4_extractor(html: str) -> str:
-    soup = BeautifulSoup(html, "html.parser")
-    # remove scripts/styles
-    for tag in soup(["script", "style", "noscript"]):
-        tag.decompose()
-    text = soup.get_text(separator=" ", strip=True)
-    return " ".join(text.split())
-
-def crawl_and_embed(start_url: str, max_depth: int = 2) -> np.ndarray:
-    loader = RecursiveUrlLoader(
-        url=start_url,
-        max_depth=max_depth,
-        extractor=bs4_extractor,
-        timeout=10,
-        #use_async=True,  # faster
-    )
-    docs = loader.load()
-    # Concatenate all text into one big blob
-    full_text = "\n\n".join(d.page_content for d in docs if d.page_content)
-
-    # Create ONE vector from the whole text
-    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    vec = model.encode([full_text])[0]   # 1D numpy array
-    return vec
