@@ -281,12 +281,40 @@
       setTimeout(() => setStatus(st, '\u2713 ' + files.length + ' file(s) indexed successfully.', 'ok'), 1400);
     });
 
-    document.getElementById('ingestBtn').addEventListener('click', () => {
+        // Call ingest_url api
+    document.getElementById('ingestBtn').addEventListener('click', async () => {
       const url = document.getElementById('urlInput').value.trim();
       const st = document.getElementById('ingestStatus');
-      if (!url) { setStatus(st, 'Please enter a valid URL.', 'error'); return; }
-      setStatus(st, 'Fetching ' + url + '...');
-      setTimeout(() => setStatus(st, '\u2713 Page indexed successfully.', 'ok'), 1600);
+
+      if (!url) {
+        setStatus(st, 'Please enter a valid URL.', 'error');
+        return;
+      }
+
+      // Show initial status
+      setStatus(st, `Fetching ${url}...`, 'loading');
+
+      try {
+        const res = await fetch('/ingest_url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url })
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          const message = data.detail || data.message || `Error: ${res.status}`;
+          throw new Error(message);
+        }
+
+        // SUCCESS
+        setStatus(st, '✓ Page indexed successfully.', 'ok');
+
+      } catch (err) {
+        console.error(err);
+        setStatus(st, `Error: ${err.message}`, 'error');
+      }
     });
 
     document.getElementById('textIngestBtn').addEventListener('click', () => {
