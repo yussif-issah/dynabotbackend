@@ -19,6 +19,7 @@ from models import models,schema
 from auth import auth
 from fastapi.responses import HTMLResponse
 from services.Crawler import crawl_site
+import qrcode
 
 try:
     models.Base.metadata.create_all(bind=engine)
@@ -195,26 +196,29 @@ async def ingest_url(payload: dict):
 
 @app.post('/ingest_text')
 async def ingest_text(payload: dict):
+    print(f"Received payload for text ingestion: {payload}")
     if not isinstance(payload, dict):
         raise HTTPException(status_code=400, detail="Invalid payload")
     text = payload.get('text')
-    title = payload.get('title') or 'written_text'
-    if not text or not text.strip():
-        raise HTTPException(status_code=400, detail="Missing 'text' in request body")
-
-    os.makedirs("uploaded_files", exist_ok=True)
-    safe_name = title.replace('://', '_').replace('/', '_').replace(' ', '_')
-    file_path = f"uploaded_files/{safe_name}.txt"
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(text)
+    username = payload.get('username')
 
     vector_store = VectoreStore(pc, DocumentProcessing(), TextProcessing())
-    vector_store.create_store(file_path)
-    return {"message": "Text ingested and vector store updated.", "file": file_path}
+    vector_store.create_store(text, index_name=username, namespace=username)
+    return {"message": "Text ingested and vector store updated."}
 
 def query_vector_store(query_text):
     answerQuestions = AnswerQuestions(vector_store=VectoreStore(pc, DocumentProcessing(), TextProcessing()), client=client) 
     answerQuestions.answer_query(query_text)
+
+
+@app.get("/generate_qr_code/{username}")
+def test_query(username: str):
+    url = f"http://localhost:8000/chat/{username}"
+    img = qrcode.make(url)
+    img_path = f"frontend/qr_codes/{username}_qr.png"
+    img.save(img_path)
+    return {"message": f"QR code generated at {img_path}"}
+
 
 if __name__ == "__main__":
     # Example usage
