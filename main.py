@@ -18,6 +18,7 @@ from database.database import engine, get_db
 from models import models,schema
 from auth import auth
 from fastapi.responses import HTMLResponse
+from services.Crawler import crawl_site
 import qrcode
 
 try:
@@ -169,26 +170,28 @@ def create_vector_store():
 @app.post('/ingest_url')
 async def ingest_url(payload: dict):
     url = payload.get('url') if isinstance(payload, dict) else None
+    max_pages = int(payload.get("max_pages", 2)) if isinstance(payload, dict) else 2
+    max_bytes = int(payload.get("max_bytes", 5_000_000)) if isinstance(payload, dict) else 5_000_000
+
     if not url:
         raise HTTPException(status_code=400, detail="Missing 'url' in request body")
     try:
         # Use urllib to avoid adding extra dependencies
-        from urllib.request import Request, urlopen
-        req = Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urlopen(req) as resp:
-            content = resp.read().decode('utf-8', errors='ignore')
+        full_text = crawl_site(url, max_pages=max_pages, max_bytes=max_bytes)
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=str(ve))
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {e}")
+        raise HTTPException(status_code=400, detail=f"Crawl failed: {e}")
 
-    os.makedirs("uploaded_files", exist_ok=True)
-    safe_name = url.replace('://', '_').replace('/', '_')
-    file_path = f"uploaded_files/{safe_name}.html"
-    with open(file_path, 'w', encoding='utf-8') as f:
-        f.write(content)
+    #except Exception as e:
+    #    raise HTTPException(status_code=400, detail=f"Failed to fetch URL: {e}")
+    content = '\n'.join(map(str,full_text))
 
     vector_store = VectoreStore(pc, DocumentProcessing(), TextProcessing())
-    vector_store.create_store(file_path)
-    return {"message": "URL ingested and vector store updated.", "file": file_path}
+    vector_store.create_store(content)
+    return {"message": "URL ingested and vector store updated."}
 
 
 @app.post('/ingest_text')
