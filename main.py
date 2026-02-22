@@ -213,7 +213,7 @@ def query_vector_store(query_text):
 
 @app.get("/generate_qr_code/{username}")
 def test_query(username: str):
-    url = f"http://localhost:8000/chat/{username}"
+    url = f"https://dynabotbackend-ghpc.onrender.com/chat/{username}"
     img = qrcode.make(url)
     img_path = f"frontend/qr_codes/{username}_qr.png"
     img.save(img_path)
