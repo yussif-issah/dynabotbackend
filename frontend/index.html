@@ -51,7 +51,7 @@
         <span class="step-num">2</span>Website URL
       </button>
       <button class="step-tab" data-panel="panel-text">
-        <span class="step-num">3</span>Write Text
+        <span class="step-num">3</span>Type Info
       </button>
     </div>
   </div>
@@ -145,10 +145,10 @@
           <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
         </svg>
       </div>
-      <h3>Write Text</h3>
+      <h3>Write information for your agent</h3>
       <p class="desc">Paste or write text directly — it's indexed immediately with no extra steps.</p>
 
-      <input id="textTitle" type="text" placeholder="Optional title (e.g., Product FAQ)" />
+
       <textarea id="textInput" placeholder="Paste or type your content here…"></textarea>
 
       <div class="card-footer">
@@ -181,10 +181,19 @@
             </svg>
             Chat with Agent
           </button>
+            <button id="generateQRBtn" class="btn btn-ghost" onclick="generateQRcode()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="25 15 21 12 15 23 19 30 16 12 2 12"/>
+            </svg>
+            Generate QR Code
+          </button>
         </div>
+          <div class ="qr_code">      
+          </div>
       </div>
     </div>
   </div>
+
 
   <!-- FOOTER -->
   <footer class="site-footer">
@@ -289,12 +298,33 @@
       setTimeout(() => setStatus(st, '\u2713 Page indexed successfully.', 'ok'), 1600);
     });
 
-    document.getElementById('textIngestBtn').addEventListener('click', () => {
+    document.getElementById('textIngestBtn').addEventListener('click', async () => {
       const txt = document.getElementById('textInput').value.trim();
       const st = document.getElementById('textStatus');
       if (!txt) { setStatus(st, 'No text to ingest.', 'error'); return; }
       setStatus(st, 'Ingesting...');
-      setTimeout(() => setStatus(st, '\u2713 Text indexed (' + txt.length + ' chars).', 'ok'), 900);
+      
+      try {
+        const res = await fetch('/ingest_text', {
+          method: 'POST',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: txt,
+            username: localStorage.getItem("username")
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setStatus(st, `✓ ${data.message}`, 'ok');
+        } else {
+          const errData = await res.json();
+          setStatus(st, `✗ Error: ${errData.detail || 'Failed to ingest text.'}`, 'error');
+        }
+      } catch (err) {
+        console.error("Error ingesting text:", err);
+        setStatus(st, `✗ Error ingesting text: ${err.message}`, 'error');
+      }
     });
 
     document.getElementById('testBtn').addEventListener('click', async () =>{
@@ -315,6 +345,67 @@
       
     }});
 
+    window.onload = function() {
+      const username = localStorage.getItem("username");
+      if (!username) {
+        alert("No user logged in. Redirecting to login page.");
+        window.location.href = "login.html";
+      }else {
+       
+        const qrDiv = document.querySelector(".qr_code");
+    if (qrDiv) {
+      // Create the image element
+      const img = document.createElement("img");
+      img.src = `qr_codes/${encodeURIComponent(username)}_qr.png`;
+      img.alt = `Generate Qr code `;
+
+      // Optional: style it
+      img.style.width = "150px";
+      img.style.height = "150px";
+
+      // Insert the image into the div
+      qrDiv.appendChild(img);
+    }
+      }
+    };
+
+    async function generateQRcode() {
+      const username = localStorage.getItem("username");
+      if (!username) {
+        alert("No user logged in. Redirecting to login page.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const res = await fetch(`/generate_qr_code/${encodeURIComponent(username)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          alert("QR code generated successfully.");
+          // Optionally, refresh the QR code display
+          const qrDiv = document.querySelector(".qr_code");
+          if (qrDiv) {
+            qrDiv.innerHTML = ""; // Clear existing QR code
+            const img = document.createElement("img");
+            img.src = `qr_codes/${encodeURIComponent(username)}_qr.png`;
+            img.alt = `QR code for ${username}`;
+            img.style.width = "150px";
+            img.style.height = "150px";
+            qrDiv.appendChild(img);
+          }
+        } else {
+          const errData = await res.json();
+          alert(`Failed to generate QR code: ${errData.detail || 'Unknown error'}`);
+        }
+      } catch (err) {
+        console.error("Error generating QR code:", err);
+        alert("Error generating QR code. Please try again.");
+      }
+    }
   </script>
 </body>
 </html>
