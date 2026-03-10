@@ -190,7 +190,6 @@ See `requirements.txt` for complete list.
 - `POST /chatbot/{chatbot_id}/add-text` - Add typed information
 - `POST /chatbot/{chatbot_id}/chat` - Public endpoint for asking questions
 - `GET /chatbot/{chatbot_id}/share` - Get shareable link & QR code
-- `GET /docs` - Interactive API documentation (Swagger UI)
 
 ## 📝 Notes
 
@@ -201,13 +200,6 @@ See `requirements.txt` for complete list.
 - **Privacy First**: Keep `settings.json` private - never commit API keys
 - **Cloud-Based Storage**: Vector embeddings stored in Pinecone (not locally)
 - **Requires Internet**: Needs OpenAI API and Pinecone access for operation
-
-## 🆘 Need Help?
-
-- **Frontend Issues**: Check `frontend/` for UI code and chatbot interface
-- **Data Processing**: Review `services/` for document and embedding logic
-- **Authentication Issues**: See `auth/auth.py` for login/registration code
-- **API Issues**: Use `/docs` endpoint for interactive Swagger UI documentation
 
 ---
 
