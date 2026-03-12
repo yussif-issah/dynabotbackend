@@ -1,6 +1,6 @@
 # DynaBot - Instant Custom Chatbot Generator
 
-A **multi-tenant platform** that lets users create their own AI chatbots in minutes. Upload documents, paste website URLs, or type information directly—DynaBot instantly generates custom chatbots with shareable links and QR codes.
+A **multi-tenant platform** that lets users create their own AI chatbots in minutes. Upload documents, paste website URLs, or type information directly, DynaBot instantly generates custom chatbots with shareable links and QR codes.
 
 ## 🎯 What This Does
 
